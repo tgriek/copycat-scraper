@@ -1,0 +1,75 @@
+{
+  "name": "copycat-scraper",
+  "version": "1.0.0",
+  "description": "Website scraper that extracts content, assets, design tokens, and structure from any site",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "copycat-scraper": "dist/cli.js",
+    "copycat-scraper-mcp": "dist/mcp-server.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./mcp": {
+      "import": "./dist/mcp-server.js",
+      "types": "./dist/mcp-server.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/cli.ts",
+    "dev": "tsx watch src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "scraper",
+    "crawler",
+    "website",
+    "design-tokens",
+    "content-extraction",
+    "playwright",
+    "mcp"
+  ],
+  "author": "tgriek",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tgriek/copycat-scraper.git"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "commander": "^12.1.0",
+    "crawlee": "^3.12.1",
+    "css-tree": "^3.1.0",
+    "mime-types": "^2.1.35",
+    "playwright": "^1.49.1",
+    "sharp": "^0.33.5",
+    "slugify": "^1.6.6",
+    "turndown": "^7.2.0",
+    "uuid": "^13.0.0",
+    "winston": "^3.17.0",
+    "zod": "^3.23.0"
+  },
+  "optionalDependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.1"
+  },
+  "devDependencies": {
+    "@types/css-tree": "^2.3.10",
+    "@types/mime-types": "^2.1.4",
+    "@types/node": "^22.10.2",
+    "@types/turndown": "^5.0.5",
+    "@types/uuid": "^10.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
