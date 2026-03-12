@@ -64,6 +64,8 @@ async function main() {
       screenshots: z.boolean().optional().describe('Capture screenshots (default: true)'),
       designTokens: z.boolean().optional().describe('Extract design tokens (default: true)'),
       downloadAssets: z.boolean().optional().describe('Download assets (default: true)'),
+      maxDocuments: z.number().optional().describe('Maximum number of documents (PDFs, etc.) to download'),
+      documentTypes: z.array(z.string()).optional().describe('Document types to download, e.g. ["pdf", "docx"] (default: all types)'),
     },
     async (params: any) => {
       const logger = createLogger(false);
@@ -90,6 +92,8 @@ async function main() {
         screenshots: params.screenshots ?? true,
         designTokens: params.designTokens ?? true,
         downloadAssets: params.downloadAssets ?? true,
+        maxDocuments: params.maxDocuments,
+        documentTypes: params.documentTypes,
       };
 
       if (params.focusPages?.length) {
