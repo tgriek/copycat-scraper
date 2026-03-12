@@ -60,4 +60,6 @@ export interface CrawlConfig {
   delay: number;
   verbose: boolean;
   headless: boolean;
+  maxDocuments?: number;
+  documentTypes?: string[];
 }

@@ -36,6 +36,8 @@ program
   .option('--user-agent <ua>', 'Custom user agent string')
   .option('--delay <ms>', 'Delay between requests in ms', String(DEFAULT_CONFIG.delay))
   .option('-v, --verbose', 'Verbose logging', DEFAULT_CONFIG.verbose)
+  .option('--max-documents <number>', 'Maximum number of documents to download')
+  .option('--document-types <types>', 'Document types to download (comma-separated, e.g. pdf,docx)')
   .option('--no-headless', 'Run browser in headed mode')
   .action(async (url: string, options: Record<string, any>) => {
     const logger = createLogger(options.verbose || false);
@@ -69,6 +71,8 @@ program
       delay: parseInt(options.delay, 10),
       verbose: options.verbose || false,
       headless: options.headless !== false,
+      maxDocuments: options.maxDocuments ? parseInt(options.maxDocuments, 10) : undefined,
+      documentTypes: options.documentTypes ? options.documentTypes.split(',').map((t: string) => t.trim()) : undefined,
     };
 
     logger.info('copycat-scraper v1.0.0');

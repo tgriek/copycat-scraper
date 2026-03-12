@@ -14,11 +14,29 @@ export class AssetDownloader {
   private hashIndex: Map<string, string> = new Map(); // hash -> localPath
   private logger: winston.Logger;
   private concurrency: number;
+  private maxDocuments?: number;
+  private documentTypes?: string[];
+  private documentCount: number = 0;
 
-  constructor(outputDir: string, logger: winston.Logger, concurrency: number = 5) {
+  constructor(outputDir: string, logger: winston.Logger, concurrency: number = 5, maxDocuments?: number, documentTypes?: string[]) {
     this.outputDir = outputDir;
     this.logger = logger;
     this.concurrency = concurrency;
+    this.maxDocuments = maxDocuments;
+    this.documentTypes = documentTypes;
+  }
+
+  private isDocumentAsset(asset: InterceptedAsset): boolean {
+    const url = asset.url.toLowerCase();
+    const ext = path.extname(new URL(url).pathname).toLowerCase();
+    return ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx'].includes(ext)
+      || asset.resourceType === 'document';
+  }
+
+  private matchesDocumentTypeFilter(url: string): boolean {
+    if (!this.documentTypes || this.documentTypes.length === 0) return true;
+    const ext = path.extname(new URL(url).pathname).toLowerCase().replace('.', '');
+    return this.documentTypes.includes(ext);
   }
 
   async downloadAll(assets: InterceptedAsset[]): Promise<Map<string, AssetRecord>> {
@@ -30,7 +48,23 @@ export class AssetDownloader {
       }
     }
 
-    const assetList = Array.from(uniqueAssets.values());
+    // Filter documents based on maxDocuments and documentTypes
+    const assetList: InterceptedAsset[] = [];
+    for (const asset of uniqueAssets.values()) {
+      if (this.isDocumentAsset(asset)) {
+        if (!this.matchesDocumentTypeFilter(asset.url)) {
+          this.logger.debug(`Skipping document (type filter): ${asset.url}`);
+          continue;
+        }
+        if (this.maxDocuments !== undefined && this.documentCount >= this.maxDocuments) {
+          this.logger.debug(`Skipping document (max ${this.maxDocuments} reached): ${asset.url}`);
+          continue;
+        }
+        this.documentCount++;
+      }
+      assetList.push(asset);
+    }
+
     this.logger.info(`Downloading ${assetList.length} unique assets...`);
 
     // Process in batches

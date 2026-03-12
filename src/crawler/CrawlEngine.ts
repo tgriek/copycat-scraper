@@ -128,6 +128,16 @@ export class CrawlEngine {
             this.allInterceptedAssets.push(asset);
           }
 
+          // Add extracted documents (from <a href>) to download queue
+          for (const doc of result.pageData.media.documents) {
+            this.allInterceptedAssets.push({
+              url: doc.src,
+              resourceType: 'document',
+              pageUrl: url,
+              mimeType: doc.type === 'pdf' ? 'application/pdf' : undefined,
+            });
+          }
+
           // Collect fonts
           this.allFonts.push(...result.fonts);
 
@@ -281,6 +291,8 @@ export class CrawlEngine {
         this.config.outputDir,
         this.logger,
         this.config.maxConcurrency,
+        this.config.maxDocuments,
+        this.config.documentTypes,
       );
 
       await assetDownloader.downloadAll(this.allInterceptedAssets);

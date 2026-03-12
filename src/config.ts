@@ -18,6 +18,8 @@ export const DEFAULT_CONFIG: CrawlConfig = {
   delay: 0,
   verbose: false,
   headless: true,
+  maxDocuments: undefined,
+  documentTypes: undefined,
 };
 
 export const VIEWPORT_SIZES: Record<string, { width: number; height: number }> = {
